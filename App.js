@@ -8,6 +8,10 @@ const CurrentPageWidget = ({
 	noteList,
 	setCurrentPage,
 	addNote,
+	editNote,
+	setEditNote,
+	updateNote,
+	deleteNote,
 }) => {
 	switch (currentPage) {
 		case 'home':
@@ -15,6 +19,8 @@ const CurrentPageWidget = ({
 				<Home
 					noteList={noteList}
 					setCurrentPage={setCurrentPage}
+					setEditNote={setEditNote}
+					deleteNote={deleteNote}
 				/>
 			)
 		case 'add':
@@ -25,7 +31,13 @@ const CurrentPageWidget = ({
 				/>
 			)
 		case 'edit':
-			return <EditNote />
+			return (
+				<EditNote
+					note={editNote}
+					updateNote={updateNote}
+					setCurrentPage={setCurrentPage}
+				/>
+			)
 		default:
 			return <Home />
 	}
@@ -33,6 +45,7 @@ const CurrentPageWidget = ({
 
 const App = () => {
 	const [currentPage, setCurrentPage] = useState('home')
+	const [editNote, setEditNote] = useState(null)
 
 	const [noteList, setNoteList] = useState([
 		{
@@ -45,15 +58,19 @@ const App = () => {
 	const addNote = (title, desc) => {
 		const id =
 			noteList.length > 0 ? noteList[noteList.length - 1].id + 1 : 1
+		setNoteList([...noteList, {id, title, desc}])
+	}
 
-		setNoteList([
-			...noteList,
-			{
-				id,
-				title: title,
-				desc: desc,
-			},
-		])
+	const updateNote = (id, title, desc) => {
+		const updatedNotes = noteList.map((note) =>
+			note.id === id ? {...note, title, desc} : note
+		)
+		setNoteList(updatedNotes)
+	}
+
+	const deleteNote = (id) => {
+		const updatedNotes = noteList.filter((note) => note.id !== id)
+		setNoteList(updatedNotes)
 	}
 
 	return (
@@ -62,6 +79,10 @@ const App = () => {
 			setCurrentPage={setCurrentPage}
 			noteList={noteList}
 			addNote={addNote}
+			editNote={editNote}
+			setEditNote={setEditNote}
+			updateNote={updateNote}
+			deleteNote={deleteNote}
 		/>
 	)
 }
